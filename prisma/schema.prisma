@@ -1,0 +1,129 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model Specie {
+  dex_number Int @id
+  name String @db.VarChar(20)
+  hp Int 
+  attack Int
+  defense Int
+  sattack Int
+  sdefense Int
+  speed Int
+  type1 Type
+  type2 Type?
+  MoveSpecie MoveSpecie[] 
+  Pokemon Pokemon[]
+}
+
+model Move {
+  id Int @id @default(autoincrement())
+  name String @db.VarChar(20)
+  damage_class DamageClass
+  power Int
+  type Type
+  MoveSpecie MoveSpecie[] 
+}
+
+model MoveSpecie {
+  id Int @id @default(autoincrement())
+  dex_number Int
+  move_id Int
+  Specie Specie @relation(fields: [dex_number],references: [dex_number],onDelete: Cascade)
+  Move Move @relation(fields: [move_id],references: [id],onDelete: Cascade)
+}
+
+model Trainer {
+  id String @id @default(uuid()) @db.Char(36)
+  name String @unique @db.VarChar(40)
+  password String @db.VarChar(255)
+  deletedAt DateTime? @db.DateTime(0) 
+  createdAt DateTime @default(now())  @db.DateTime(0)
+  updatedAt DateTime @updatedAt @db.DateTime(0)
+  Pokemon Pokemon[]
+}
+
+model Pokemon {
+  id Int @id @default(autoincrement())
+  trainer_id String @db.Char(36)
+  dex_number Int
+  nickname String @db.VarChar(40)
+  level Int 
+  effort_hp Int
+  effort_attack Int
+  effort_defence Int
+  effort_s_attack Int
+  effort_s_defense Int
+  effort_speed Int
+  individual_hp Int
+  individual_attack Int
+  individual_defense Int
+  individual_s_attack Int
+  individual_s_defense Int
+  individual_speed Int
+  Specie Specie @relation(fields: [dex_number],references: [dex_number],onDelete: Cascade)
+  Trainer Trainer @relation(fields: [trainer_id],references: [id],onDelete: Cascade)
+}
+
+enum DamageClass {
+  physical
+  special
+  status
+}
+
+enum Type {
+  ノーマル
+  ほのお
+  みず
+  でんき
+  くさ
+  こおり
+  かくとう
+  どく
+  じめん
+  ひこう
+  エスパー
+  むし
+  いわ
+  ゴースト
+  ドラゴン
+  あく
+  はがね
+  フェアリー
+}
+
+enum Nature {
+  さみしがり
+  いじっぱり
+  やんちゃ
+  ゆうかん
+  ずぶとい
+  わんぱく
+  のうてんき
+  のんき
+  ひかえめ
+  おっとり
+  うっかりや
+  れいせい
+  おだやか
+  おとなしい
+  しんちょう
+  なまいき
+  おくびょう
+  せっかち
+  ようき
+  むじゃき
+  まじめ
+}

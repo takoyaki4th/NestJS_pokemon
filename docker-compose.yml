@@ -1,0 +1,19 @@
+version: "3.8"
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: mysql
+    ports:
+      - 3306:3306
+    volumes:
+      - ./docker/mysql/init.d:/docker-entrypoint-initdb.d
+      - ./docker/mysql/pgdata:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: secret
+      MYSQL_DATABASE: pokemon_calc
+      MYSQL_USER: pokemon_calc
+      MYSQL_PASSWORD: takoyaki
+    hostname: mysql
+    restart: always
+    user: root
+

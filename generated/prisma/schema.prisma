@@ -1,0 +1,51 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model Specie {
+  dex_number Int      @id
+  name       String   @db.VarChar(20)
+  hp         Int
+  attack     Int
+  defense    Int
+  sattack    Int
+  sdefense   Int
+  speed      Int
+  type1      Type
+  type2      Type
+  createdAt  DateTime @default(now()) @db.Timestamp(0)
+  updatedAt  DateTime @updatedAt @db.Timestamp(0)
+}
+
+enum Type {
+  ノーマル
+  ほのお
+  みず
+  でんき
+  くさ
+  こおり
+  かくとう
+  どく
+  じめん
+  ひこう
+  エスパー
+  むし
+  いわ
+  ゴースト
+  ドラゴン
+  あく
+  はがね
+  フェアリー
+}
