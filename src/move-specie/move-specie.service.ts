@@ -1,7 +1,8 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateMoveSpecieDto } from './dto/create-move-specie.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { MoveSpecie } from '@prisma/client';
+import { Move, MoveSpecie } from '@prisma/client';
+import { map } from 'rxjs';
 
 @Injectable()
 export class MoveSpecieService {
@@ -11,16 +12,20 @@ export class MoveSpecieService {
     return await this.prismaService.moveSpecie.findMany();
   }
 
-  async findByDexNumber(dex_number: number):Promise<MoveSpecie[]> {
-    const found = await this.prismaService.moveSpecie.findMany({
+  async findByDexNumber(dex_number: number):Promise<Move[]> {
+    const found:Array<MoveSpecie & { Move:Move }> = await this.prismaService.moveSpecie.findMany({
       where:{
         dex_number
       },
+      relationLoadStrategy:'join',
+      include:{
+        Move:true
+      }
     });
     if(!found){
       throw new NotFoundException();
     }
-    return found;
+    return found.map(found_i => found_i.Move);
   }
 
   async findByMoveId(move_id: number):Promise<MoveSpecie[]> {
